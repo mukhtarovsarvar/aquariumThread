@@ -17,21 +17,26 @@ public class FishDTO extends Thread {
 
     private Aquarium aquarium;
 
+    private long timeOut;
 
     @Override
     public void run() {
 
         while (live != 0) {
             swim();
+            aquarium.checkForCollision(this);
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            aquarium.remove(this);
             live--;
+            if(timeOut>0){
+                timeOut--;
+            }
         }
 
+        aquarium.remove(this);
         System.out.println("DEAD FISH -> " + getName() + " " + toString());
     }
 
@@ -87,8 +92,18 @@ public class FishDTO extends Thread {
     public FishDTO(Aquarium aquarium, int x, int y, Gender gender, int live) {
         this.x = x;
         this.y = y;
+        this.aquarium = aquarium;
         this.gender = gender;
         this.live = live;
+    }
+
+
+    public long getTimeOut() {
+        return timeOut;
+    }
+
+    public void setTimeOut(long timeOut) {
+        this.timeOut = timeOut;
     }
 
     public int getX() {
